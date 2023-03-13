@@ -1,6 +1,6 @@
-# Pseudo-Riemannian Graph Convolutional Networks
+# Curvature-Aware Pseudo-Riemannian Graph Convolutional Networks
 
-This repository is the official implementation of [Pseudo-Riemannian Graph Convolutional Networks](https://arxiv.org/abs/2106.03134) in PyTorch, based on [HGCN](https://github.com/HazyResearch/hgcn) implementation. 
+This repository is based on the official implementation of [Pseudo-Riemannian Graph Convolutional Networks](https://arxiv.org/abs/2106.03134) in PyTorch (https://github.com/xiongbo010/qgcn). 
 
 ## Requirements
 
@@ -65,6 +65,8 @@ optional arguments:
   --manifold MANIFOLD   which manifold to use, can be any of [Euclidean,
                         Hyperboloid, PoincareBall]
   --c C                 hyperbolic radius, set to None for trainable curvature
+  --curvature-alpha     Alpha that controls the radius of hemisphere 
+  --curvature-coef      Coefficient to regularise the scalar curvature loss
   --r R                 fermi-dirac decoder parameter for lp
   --t T                 fermi-dirac decoder parameter for lp
   --pretrained-embeddings PRETRAINED_EMBEDDINGS
