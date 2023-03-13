@@ -13,8 +13,9 @@ import optimizers
 import torch
 from config import parser
 from models.base_models import NCModel, LPModel, MDModel
-from utils.data_utils import load_data
+from utils.data_utils import load_data, sparse_mx_to_torch_sparse_tensor
 from utils.train_utils import get_dir_name, format_metrics
+from utils.distortions import compute_f_score
 
 torch.autograd.set_detect_anomaly(True)
 
@@ -100,6 +101,11 @@ def train(args):
         for x, val in data.items():
             if torch.is_tensor(data[x]):
                 data[x] = data[x].to(args.device)
+
+    # TODO: pre-compute f_scores
+    # data['f_score'] = compute_f_score(data['adj_train'])
+    data['f_score'] = torch.zeros((data['adj_train'].shape[0],))
+
     # Train model
     t_total = time.time()
     counter = 0
@@ -165,5 +171,6 @@ def train(args):
         logging.info(f"Saved model in {save_dir}")
 
 if __name__ == '__main__':
+    import pdb; pdb.set_trace()
     args = parser.parse_args()
     train(args)

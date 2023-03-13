@@ -5,6 +5,9 @@ import scipy.sparse.csgraph as csg
 from joblib import Parallel, delayed
 import multiprocessing
 import networkx as nx
+import torch
+from torch_geometric.utils import degree
+from utils.data_utils import sparse_mx_to_torch_sparse_tensor
 
 def entry_is_good(h, h_rec): return (not np.isnan(h_rec)) and (not np.isinf(h_rec)) and h_rec != 0 and h != 0
 
@@ -87,3 +90,38 @@ def map_score(H1, H2, n, jobs):
     #maps = Parallel(n_jobs=jobs)(delayed(map_row)(H1[i,:],H2[i,:],n,i) for i in range(n))
     maps  = [map_row(H1[i,:],H2[i,:],n,i) for i in range(n)]
     return np.sum(maps)/n
+
+
+def compute_num_triangles(i, j, adj):
+    count = 0
+    for k in range(adj.shape[0]):
+        if adj[i][k] > 0 and adj[j][k] > 0:
+            count += 1
+    return count
+
+
+def compute_f_score(adj):
+    adj = sparse_mx_to_torch_sparse_tensor(adj)
+    num_nodes = adj.shape[0]
+    degrees = degree(adj._indices()[0], num_nodes, dtype=torch.long)
+    f = torch.zeros((num_nodes,))
+    for i in range(num_nodes):
+        f[i] = 0.0
+        for j in range(num_nodes):
+            if adj[i][j] > 0:
+                f[i] += 4 - degrees[i] - degrees[j] + 3 * compute_num_triangles(i, j, adj)
+        f[i] = f[i] / degrees[i]
+    breakpoint()
+    return f
+
+
+def compute_r_score(r, alpha):
+    # TODO: compute scalar curvature
+    breakpoint()
+    phi = alpha * torch.atan(r / alpha)
+    alpha_2 = alpha * alpha
+    r_2 = torch.pow(r, 2)
+    first_div = alpha_2 / (alpha_2 + r_2)
+    second_div = - 2 * alpha_2 * r / torch.pow((alpha_2 + r_2), 2)
+    return 2 * (- 2 * second_div / phi + (1 - torch.pow(first_div, 2)) / (phi * phi))
+

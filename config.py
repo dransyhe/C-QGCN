@@ -25,10 +25,10 @@ config_args = {
         'min-epochs': (100, 'do not early stop before min-epochs')
     },
     'model_config': {
-        'task': ('nc', 'which tasks to train on, can be any of [lp, nc]'),
-        'model': ('GCN', 'which encoder to use, can be any of [Shallow, MLP, HNN, GCN, GAT, HyperGCN]'),
+        'task': ('md', 'which tasks to train on, can be any of [lp, nc]'),
+        'model': ('HGCN', 'which encoder to use, can be any of [Shallow, MLP, HNN, GCN, GAT, HGCN]'),
         'dim': (128, 'embedding dimension'),
-        'manifold': ('Euclidean', 'which manifold to use, can be any of [Euclidean, Hyperboloid, PoincareBall, PseudoHyperboloid]'),
+        'manifold': ('PseudoHyperboloid', 'which manifold to use, can be any of [Euclidean, Hyperboloid, PoincareBall, PseudoHyperboloid]'),
         'c': (-1.0, 'hyperbolic radius, set to None for trainable curvature'),
         'r': (2., 'fermi-dirac decoder parameter for lp'),
         't': (1., 'fermi-dirac decoder parameter for lp'),
@@ -44,9 +44,11 @@ config_args = {
         'local-agg': (0, 'whether to local tangent space aggregation or not'),
         'space_dim': (9, 'whether to local tangent space aggregation or not'),
         'time_dim': (1, 'whether to local tangent space aggregation or not'),
+        'curv_coef': (0.5, 'regulariser to account for curvature loss'),
+        'curv_alpha': (0.1, 'alpha for curvature')  # TODO: to learn or fine-tune
     },
     'data_config': {
-        'dataset': ('cora', 'which dataset to use'),
+        'dataset': ('web-edu', 'which dataset to use'),
         'val-prop': (0.05, 'proportion of validation edges for link prediction'),
         'test-prop': (0.1, 'proportion of test edges for link prediction'),
         'use-feats': (1, 'whether to use node features or not'),

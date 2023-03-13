@@ -14,14 +14,20 @@ def run_QGCN():
             for data in dataset:
                 for space_dim in space_dims:
                     lr = 0.01
-                    command = "python train.py --task %s --dataset %s --model HGCN --lr %s --dim %d --num-layers 2 --act relu --bias 1 --dropout 0 --weight-decay 0 --manifold PseudoHyperboloid --log-freq 5 --cuda 0 --c None --space_dim %s --time_dim %s --epoch 2000" % (task, data, lr, dim, space_dim, dim-space_dim)
+                    command = "python train.py --task %s --dataset %s --model HGCN --lr %s --dim %d --num-layers 2 " \
+                              "--act relu --bias 1 --dropout 0 --weight-decay 0 --manifold PseudoHyperboloid " \
+                              "--log-freq 5 --cuda 0 --c None --space_dim %s --time_dim %s --epoch 2000" \
+                              % (task, data, lr, dim, space_dim, dim-space_dim)
                     print(command)
                     process = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell = True)
                     stdout, stderr = process.communicate()
                     process.wait()
-                    prefix = "./logs/md510/"+data+"/pseudo_hyperboloid_skip_lr" + "_" +  task + "_" + data + "_" + str(dim)+ "_" + str(space_dim)
+                    prefix = "./logs/md510/"+data+"/pseudo_hyperboloid_skip_lr" + "_" + task + "_" + data + "_" + str(dim)+ "_" + str(space_dim)
                     stdout_name = prefix + ".out" 
-                    stderr_nameå = prefix + ".err"
+                    stderr_name = prefix + ".err"
+                    isExist = os.path.exists("./logs/md510/"+data)
+                    if not isExist:
+                        os.makedirs("./logs/md510/"+data)
                     print(stdout, stderr)
                     with open(stdout_name, "w") as out, open(stderr_name, "w") as err:
                         out.write(stdout.decode("utf-8"))
