@@ -116,8 +116,7 @@ def compute_f_score(adj):
 
 
 def compute_r_score(r, alpha):
-    # TODO: compute scalar curvature
-    breakpoint()
+    # compute scalar curvature
     phi = alpha * torch.atan(r / alpha)
     alpha_2 = alpha * alpha
     r_2 = torch.pow(r, 2)
