@@ -1,6 +1,6 @@
 # Curvature-Aware Pseudo-Riemannian Graph Convolutional Networks
 
-This repository is based on the official [implementation](https://github.com/xiongbo010/qgcn) of [Pseudo-Riemannian Graph Convolutional Networks](https://arxiv.org/abs/2106.03134). 
+This is the repository for my final project submitted to [R255: Physics and Geometry in Machine Learning](https://www.cl.cam.ac.uk/teaching/2223/R255/). The code and description below are largely adapted from the [official implementation](https://github.com/xiongbo010/qgcn) of [Pseudo-Riemannian Graph Convolutional Networks](https://arxiv.org/abs/2106.03134). 
 
 ## Requirements
 
@@ -65,8 +65,9 @@ optional arguments:
   --manifold MANIFOLD   which manifold to use, can be any of [Euclidean,
                         Hyperboloid, PoincareBall]
   --c C                 hyperbolic radius, set to None for trainable curvature
-  --curvature-alpha     Alpha that controls the radius of hemisphere 
-  --curvature-coef      Coefficient to regularise the scalar curvature loss
+  --curva-aware         Whether to use curvature-aware method  
+  --curv-coef           Coefficient to regularise the scalar curvature loss
+  --load-f              Whether to load pre-computed f-score (node-wise Forman curvature)
   --r R                 fermi-dirac decoder parameter for lp
   --t T                 fermi-dirac decoder parameter for lp
   --pretrained-embeddings PRETRAINED_EMBEDDINGS
