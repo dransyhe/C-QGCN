@@ -82,7 +82,12 @@ def train(args):
     # print(model.parameters())
     curvature_lr = 1e-4
     if args.model == 'HGCN' and args.task == 'md':
-        pararms = [{'params': model.encoder.layers[0].linear.weight}, {'params': model.encoder.layers[0].linear.bias}, {'params': model.encoder.layers[0].c_in, 'lr':curvature_lr},{'params': model.encoder.layers[0].c_out, 'lr':curvature_lr} ]
+        pararms = [{'params': model.encoder.layers[0].linear.weight},
+                   {'params': model.encoder.layers[0].linear.bias},
+                   {'params': model.encoder.layers[0].c_in, 'lr':curvature_lr},
+                   {'params': model.encoder.layers[0].c_out, 'lr':curvature_lr},
+                   {'params': model.encoder.r_map.weight},
+                   {'params': model.encoder.r_map.bias}]
         optimizer = getattr(optimizers, args.optimizer)(pararms, lr=args.lr,weight_decay=args.weight_decay)
     else:
         optimizer = getattr(optimizers, args.optimizer)(params=model.parameters(), lr=args.lr,weight_decay=args.weight_decay)
