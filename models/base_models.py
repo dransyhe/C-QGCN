@@ -66,9 +66,10 @@ class BaseModel(nn.Module):
         super(BaseModel, self).__init__()
         self.manifold_name = args.manifold
         if args.c is not None:
-            self.c = torch.tensor([args.c],requires_grad=True)
             if not args.cuda == -1:
-                self.c = self.c.to(args.device)
+                self.c = torch.tensor([args.c], requires_grad=True, device=args.device)
+            else:
+                self.c = torch.tensor([args.c], requires_grad=True)
         else:
             if args.manifold in ['Hyperboloid', 'PoincareBall']:
                 self.c = nn.Parameter(torch.Tensor([1.]))
