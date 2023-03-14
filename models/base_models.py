@@ -156,6 +156,8 @@ class NCModel(BaseModel):
     def __init__(self, args):
         super(NCModel, self).__init__(args)
         self.decoder = model2decoder[args.model](self.manifold, self.c, args)
+        if args.curv_aware:
+          self.md_decoder = MDDecoder(self.c, self.manifold, args)
         if args.n_classes > 2:
             self.f1_average = 'micro'
         else:
@@ -165,18 +167,26 @@ class NCModel(BaseModel):
         else:
             self.weights = torch.Tensor([1.] * args.n_classes)
         self.distortion_loss_coef = args.distortion_loss_coef
+        self.curv_aware = args.curv_aware
         # if not args.cuda == -1:
         #     self.weights = self.weights.to(args.device)
 
     def decode(self, h, adj, idx):
-        output, distortion_loss = self.decoder.decode(h, adj)
-        node_loss = F.log_softmax(output[idx], dim=1)
-        return node_loss + self.distortion_loss_coef * distortion_loss
+        output = self.decoder.decode(h, adj)
+        pred = F.log_softmax(output[idx], dim=1)
+        if self.curv_aware:
+          _, _, distortion_loss, _, _, _ = self.md_decoder.decode(h, adj)
+          return pred, distortion_loss
+        else:
+          return pred, None
 
     def compute_metrics(self, embeddings, data, split):
         idx = data[f'idx_{split}']
-        output = self.decode(embeddings, data['adj_train_norm'], idx)
+        output, distortion_loss = self.decode(embeddings, data, idx)
+        self.weights = self.weights.to(output.device)
         loss = F.nll_loss(output, data['labels'][idx], self.weights)
+        if self.curv_aware:
+          loss = loss + self.distortion_loss_coef * distortion_loss
         acc, f1 = acc_f1(output, data['labels'][idx], average=self.f1_average)
         metrics = {'loss': loss, 'acc': acc, 'f1': f1}
         return metrics
