@@ -46,7 +46,7 @@ config_args = {
         'space_dim': (9, 'whether to local tangent space aggregation or not'),
         'time_dim': (1, 'whether to local tangent space aggregation or not'),
         'curv_coef': (0.5, 'regulariser to account for curvature loss'),
-        'curv_alpha': (0.1, 'alpha for curvature'),  # TODO: to learn or fine-tune
+        # 'curv_alpha': (0.1, 'alpha for curvature'),  # TODO: to learn or fine-tune
         'curv_aware': (True, 'whether use curvature-aware')
     },
     'data_config': {

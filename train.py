@@ -88,7 +88,8 @@ def train(args):
                        {'params': model.encoder.layers[0].c_in, 'lr':curvature_lr},
                        {'params': model.encoder.layers[0].c_out, 'lr':curvature_lr},
                        {'params': model.encoder.r_map.weight},
-                       {'params': model.encoder.r_map.bias}]
+                       {'params': model.encoder.r_map.bias},
+                       {'params': model.decoder.curv_alpha}]
         else:
             pararms = [{'params': model.encoder.layers[0].linear.weight},
                        {'params': model.encoder.layers[0].linear.bias},

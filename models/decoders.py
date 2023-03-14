@@ -107,7 +107,7 @@ class MDDecoder(Decoder):
         self.input_dim = args.dim
         self.decode_adj = False
         self.beta = c
-        self.curv_alpha = args.curv_alpha
+        self.curv_alpha = nn.Parameter(torch.Tensor([1.]))
         self.curv_coef = args.curv_coef
         self.curv_aware = args.curv_aware
         self.r_h = args.time_dim * (args.time_dim - 1)
