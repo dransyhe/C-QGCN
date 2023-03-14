@@ -1,6 +1,6 @@
-# Pseudo-Riemannian Graph Convolutional Networks
+# Curvature-Aware Pseudo-Riemannian Graph Convolutional Networks
 
-This repository is the official implementation of [Pseudo-Riemannian Graph Convolutional Networks](https://arxiv.org/abs/2106.03134) in PyTorch, based on [HGCN](https://github.com/HazyResearch/hgcn) implementation. 
+This repository is based on the official [implementation](https://github.com/xiongbo010/qgcn) of [Pseudo-Riemannian Graph Convolutional Networks](https://arxiv.org/abs/2106.03134). 
 
 ## Requirements
 
@@ -65,6 +65,8 @@ optional arguments:
   --manifold MANIFOLD   which manifold to use, can be any of [Euclidean,
                         Hyperboloid, PoincareBall]
   --c C                 hyperbolic radius, set to None for trainable curvature
+  --curvature-alpha     Alpha that controls the radius of hemisphere 
+  --curvature-coef      Coefficient to regularise the scalar curvature loss
   --r R                 fermi-dirac decoder parameter for lp
   --t T                 fermi-dirac decoder parameter for lp
   --pretrained-embeddings PRETRAINED_EMBEDDINGS
@@ -98,25 +100,9 @@ optional arguments:
                         seed for data splits (train/test/val)
 ```
 
-## Citation
-
-If you find this code useful, please cite the following paper: 
-```
-@inproceedings{Xiong2021Pseudo,
-  title={Pseudo-Riemannian Graph Convolutional Networks},
-  author={Bo Xiong and Shichao Zhu and Nico Potyka and Shirui Pan and Chuan Zhou and Steffen Staab},
-  booktitle={Advances in Neural Information Processing Systems},
-  year={2022}
-}
-```
-
 ## Some of the code was forked from the following repositories
-
+ * [qgcn](https://github.com/xiongbo010/qgcn)
  * [hgcn](https://github.com/HazyResearch/hgcn)
  * [ultrahyperbolic embeddings](https://github.com/MarcTLaw/UltrahyperbolicRepresentation)
  * [geoopt](https://github.com/geoopt/geoopt)
 
-
-## Contributing
-
->📋  Pick a licence and describe how to contribute to your code repository. 
