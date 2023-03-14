@@ -81,13 +81,62 @@ class LinearDecoder(Decoder):
         self.decode_adj = False
         self.curv_aware = args.curv_aware
 
-    def decode(self, x, adj):
+    def decode(self, x, data):
         if self.curv_aware:
             x, r = x[:, :-1], x[:, -1:]
         h = self.manifold.proj_tan0(self.manifold.logmap0(x, self.c), self.c)
         if self.curv_aware:
             h = torch.cat((h, r), dim=-1)
-        return super(LinearDecoder, self).decode(h, adj)
+        pred = super(LinearDecoder, self).decode(h, data['adj_train'])
+
+        if self.curv_aware:
+            num, dim = x.size(0), x.size(1)
+            device = x.get_device()
+            if device >= 0:
+                adj = torch.Tensor(data['adj_train'].A).to(device)
+            else:
+                adj = torch.Tensor(data['adj_train'].A)
+            positive = adj.bool()
+            negative = ~positive
+
+            x_1 = x.repeat(num, 1)
+            x_2 = x.repeat_interleave(num, 0)
+            dist = self.manifold.sqdist(x_1, x_2, self.beta).view(num, num)
+
+            # prepare r_1, r_2
+            r_1 = r.repeat(num, 1)
+            r_2 = r.repeat_interleave(num, 0)
+
+            # add r_dist = (r_i - r_j)^2
+            r_dist = (r_1 - r_2).pow(2).view(num, num)
+            dist = dist + r_dist
+
+            inner = self.manifold.inner(x_1, x_2).view(num, num)
+
+            simi = torch.clamp(torch.exp(-dist), min=1e-15)
+            positive_sim = simi * (positive.long())
+            negative_sim = simi * (negative.long())
+
+            edge_inner = inner * adj.bool()
+            max_inner, min_inner = edge_inner.max().item(), edge_inner.min().item()
+
+            negative_sum = negative_sim.sum(dim=1).unsqueeze(1).repeat(1, num)
+            dist_loss = torch.clamp(torch.div(positive_sim, negative_sum)[positive], min=1e-15)
+            # print("loss:",loss.min().item())
+            dist_loss = (-torch.log(dist_loss)).sum()
+
+            # add curv_loss
+            # curv_loss = sum((F(x_i) - R_h -  R(ri))^2 / (|F(x_i)| + eps))
+            r_score = compute_r_score(r, self.curv_alpha).to(x.device)
+            curv_loss = torch.sum(torch.pow((data['f_score'] - self.r_h - r_score), 2) /
+                                  torch.pow((torch.abs(data['f_score']) + 5), 2))
+            # (removed self.curv_loss_coef)
+            loss = dist_loss + curv_loss
+        else:
+            loss = 0.
+
+        return pred, loss
+
 
     def extra_repr(self):
         return 'in_features={}, out_features={}, bias={}, c={}'.format(

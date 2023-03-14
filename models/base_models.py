@@ -164,12 +164,14 @@ class NCModel(BaseModel):
             self.weights = torch.Tensor([1., 1. / data['labels'][idx_train].mean()])
         else:
             self.weights = torch.Tensor([1.] * args.n_classes)
-        if not args.cuda == -1:
-            self.weights = self.weights.to(args.device)
+        self.distortion_loss_coef = args.distortion_loss_coef
+        # if not args.cuda == -1:
+        #     self.weights = self.weights.to(args.device)
 
     def decode(self, h, adj, idx):
-        output = self.decoder.decode(h, adj)
-        return F.log_softmax(output[idx], dim=1)
+        output, distortion_loss = self.decoder.decode(h, adj)
+        node_loss = F.log_softmax(output[idx], dim=1)
+        return node_loss + self.distortion_loss_coef * distortion_loss
 
     def compute_metrics(self, embeddings, data, split):
         idx = data[f'idx_{split}']
