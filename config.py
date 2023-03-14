@@ -23,10 +23,10 @@ config_args = {
         'print-epoch': (True, ''),
         'grad-clip': (None, 'max norm for gradient clipping, or None for no gradient clipping'),
         'min-epochs': (100, 'do not early stop before min-epochs'),
-        'load-f': (True, '')
+        'load-f': (False, '')
     },
     'model_config': {
-        'task': ('md', 'which tasks to train on, can be any of [lp, nc]'),
+        'task': ('nc', 'which tasks to train on, can be any of [lp, nc]'),
         'model': ('HGCN', 'which encoder to use, can be any of [Shallow, MLP, HNN, GCN, GAT, HGCN]'),
         'dim': (128, 'embedding dimension'),
         'manifold': ('PseudoHyperboloid', 'which manifold to use, can be any of [Euclidean, Hyperboloid, PoincareBall, PseudoHyperboloid]'),
@@ -50,7 +50,7 @@ config_args = {
         'curv_aware': (True, 'whether use curvature-aware')
     },
     'data_config': {
-        'dataset': ('web-edu', 'which dataset to use'),
+        'dataset': ('cora', 'which dataset to use'),
         'val-prop': (0.05, 'proportion of validation edges for link prediction'),
         'test-prop': (0.1, 'proportion of test edges for link prediction'),
         'use-feats': (1, 'whether to use node features or not'),

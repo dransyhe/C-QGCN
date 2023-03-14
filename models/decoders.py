@@ -71,14 +71,22 @@ class LinearDecoder(Decoder):
     def __init__(self, manifold,c, args):
         super(LinearDecoder, self).__init__(c)
         self.manifold = getattr(manifolds, args.manifold)()
-        self.input_dim = args.dim
+        if args.curv_aware:
+            self.input_dim = args.dim + 1
+        else:
+            self.input_dim = args.dim
         self.output_dim = args.n_classes
         self.bias = args.bias
         self.cls = Linear(self.input_dim, self.output_dim, args.dropout, lambda x: x, self.bias)
         self.decode_adj = False
+        self.curv_aware = args.curv_aware
 
     def decode(self, x, adj):
+        if self.curv_aware:
+            x, r = x[:, :-1], x[:, -1:]
         h = self.manifold.proj_tan0(self.manifold.logmap0(x, self.c), self.c)
+        if self.curv_aware:
+            h = torch.cat((h, r), dim=-1)
         return super(LinearDecoder, self).decode(h, adj)
 
     def extra_repr(self):
@@ -89,7 +97,7 @@ class LinearDecoder(Decoder):
 
 class MDDecoder(Decoder):
     """
-    Graph Reconstruction Decoder for Hyperbolic/Euclidean node classification models.
+    Graph Reconstruction Decoder for Hyperbolic/Euclidean minimise distortion models.
     """
 
     def __init__(self, c, manifold, args):
