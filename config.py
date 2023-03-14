@@ -5,7 +5,7 @@ from utils.train_utils import add_flags_from_config
 config_args = {
     'training_config': {
         'lr': (0.01, 'learning rate'),
-        'dropout': (0.0, 'dropout probability'),
+        'dropout': (0.5, 'dropout probability'),
         'cuda': (-1, 'which cuda device to use (-1 for cpu training)'),
         'epochs': (2000, 'maximum number of epochs to train for'),
         'weight-decay': (0., 'l2 regularization strength'),
@@ -13,8 +13,8 @@ config_args = {
         'momentum': (0.999, 'momentum in optimizer'),
         'patience': (100, 'patience for early stopping'),
         'seed': (1234, 'seed for training'),
-        'log-freq': (1, 'how often to compute print train/val metrics (in epochs)'),
-        'eval-freq': (1, 'how often to compute val metrics (in epochs)'),
+        'log-freq': (10, 'how often to compute print train/val metrics (in epochs)'),
+        'eval-freq': (10, 'how often to compute val metrics (in epochs)'),
         'save': (1, '1 to save model and logs and 0 otherwise'),
         'save-dir': (None, 'path to save training logs and model weights (defaults to logs/task/date/run/)'),
         'sweep-c': (0, ''),
@@ -23,14 +23,14 @@ config_args = {
         'print-epoch': (True, ''),
         'grad-clip': (None, 'max norm for gradient clipping, or None for no gradient clipping'),
         'min-epochs': (100, 'do not early stop before min-epochs'),
-        'load-f': (False, '')
+        'load-f': (True, '')
     },
     'model_config': {
         'task': ('nc', 'which tasks to train on, can be any of [lp, nc]'),
         'model': ('HGCN', 'which encoder to use, can be any of [Shallow, MLP, HNN, GCN, GAT, HGCN]'),
-        'dim': (128, 'embedding dimension'),
+        'dim': (16, 'embedding dimension'),
         'manifold': ('PseudoHyperboloid', 'which manifold to use, can be any of [Euclidean, Hyperboloid, PoincareBall, PseudoHyperboloid]'),
-        'c': (-1.0, 'hyperbolic radius, set to None for trainable curvature'),
+        'c': (None, 'hyperbolic radius, set to None for trainable curvature'),
         'r': (2., 'fermi-dirac decoder parameter for lp'),
         't': (1., 'fermi-dirac decoder parameter for lp'),
         'pretrained-embeddings': (None, 'path to pretrained embeddings (.npy file) for Shallow node classification'),
@@ -43,8 +43,8 @@ config_args = {
         'double-precision': ('0', 'whether to use double precision'),
         'use-att': (0, 'whether to use hyperbolic attention or not'),
         'local-agg': (0, 'whether to local tangent space aggregation or not'),
-        'space_dim': (9, 'whether to local tangent space aggregation or not'),
-        'time_dim': (1, 'whether to local tangent space aggregation or not'),
+        'space_dim': (2, 'whether to local tangent space aggregation or not'),
+        'time_dim': (14, 'whether to local tangent space aggregation or not'),
         'curv_coef': (0.5, 'regulariser to account for curvature loss'),
         # 'curv_alpha': (0.1, 'alpha for curvature'),  # TODO: to learn or fine-tune
         'curv_aware': (True, 'whether use curvature-aware')
