@@ -108,8 +108,12 @@ def train(args):
                 data[x] = data[x].to(args.device)
 
     # pre-compute f_scores
-    data['f_score'] = compute_f_score(data['adj_train'])
-    # data['f_score'] = torch.zeros((data['adj_train'].shape[0],))
+    filename = os.path.join(save_dir, args.dataset + 'f_score.p')
+    if not args.load_f:
+        data['f_score'] = compute_f_score(data['adj_train'])
+        pickle.dump(data['f_score'], open(filename, 'wb'))
+    else:
+        data['f_score'] = pickle.load(open(filename, 'rb'))
 
     # Train model
     t_total = time.time()
