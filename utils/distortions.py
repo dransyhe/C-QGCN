@@ -6,7 +6,7 @@ from joblib import Parallel, delayed
 import multiprocessing
 import networkx as nx
 import torch
-from torch_geometric.utils import degree
+# from torch_geometric.utils import degree
 from utils.data_utils import sparse_mx_to_torch_sparse_tensor
 
 def entry_is_good(h, h_rec): return (not np.isnan(h_rec)) and (not np.isinf(h_rec)) and h_rec != 0 and h != 0
@@ -103,15 +103,16 @@ def compute_num_triangles(i, j, adj):
 def compute_f_score(adj):
     adj = sparse_mx_to_torch_sparse_tensor(adj)
     num_nodes = adj.shape[0]
-    degrees = degree(adj._indices()[0], num_nodes, dtype=torch.long)
-    f = torch.zeros((num_nodes,))
+    # degrees = degree(adj._indices()[0], num_nodes, dtype=torch.long)
+    row = adj._indices()[0]
+    degrees = torch.bincount(row)
+    f = torch.zeros((num_nodes, 1))
     for i in range(num_nodes):
         f[i] = 0.0
         for j in range(num_nodes):
             if adj[i][j] > 0:
                 f[i] += 4 - degrees[i] - degrees[j] + 3 * compute_num_triangles(i, j, adj)
         f[i] = f[i] / degrees[i]
-    breakpoint()
     return f
 
 
