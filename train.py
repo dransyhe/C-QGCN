@@ -82,12 +82,18 @@ def train(args):
     # print(model.parameters())
     curvature_lr = 1e-4
     if args.model == 'HGCN' and args.task == 'md':
-        pararms = [{'params': model.encoder.layers[0].linear.weight},
-                   {'params': model.encoder.layers[0].linear.bias},
-                   {'params': model.encoder.layers[0].c_in, 'lr':curvature_lr},
-                   {'params': model.encoder.layers[0].c_out, 'lr':curvature_lr},
-                   {'params': model.encoder.r_map.weight},
-                   {'params': model.encoder.r_map.bias}]
+        if args.curv_aware:
+            pararms = [{'params': model.encoder.layers[0].linear.weight},
+                       {'params': model.encoder.layers[0].linear.bias},
+                       {'params': model.encoder.layers[0].c_in, 'lr':curvature_lr},
+                       {'params': model.encoder.layers[0].c_out, 'lr':curvature_lr},
+                       {'params': model.encoder.r_map.weight},
+                       {'params': model.encoder.r_map.bias}]
+        else:
+            pararms = [{'params': model.encoder.layers[0].linear.weight},
+                       {'params': model.encoder.layers[0].linear.bias},
+                       {'params': model.encoder.layers[0].c_in, 'lr': curvature_lr},
+                       {'params': model.encoder.layers[0].c_out, 'lr': curvature_lr}]
         optimizer = getattr(optimizers, args.optimizer)(pararms, lr=args.lr,weight_decay=args.weight_decay)
     else:
         optimizer = getattr(optimizers, args.optimizer)(params=model.parameters(), lr=args.lr,weight_decay=args.weight_decay)
@@ -108,7 +114,8 @@ def train(args):
                 data[x] = data[x].to(args.device)
 
     # pre-compute f_scores
-    filename = os.path.join(save_dir, args.dataset + 'f_score.p')
+    data_path = os.path.join(os.getcwd() + "/data/", args.dataset)
+    filename = os.path.join(data_path, args.dataset + '_f_score.p')
     if not args.load_f:
         data['f_score'] = compute_f_score(data['adj_train'])
         pickle.dump(data['f_score'], open(filename, 'wb'))

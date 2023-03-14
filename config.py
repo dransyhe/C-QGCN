@@ -23,7 +23,7 @@ config_args = {
         'print-epoch': (True, ''),
         'grad-clip': (None, 'max norm for gradient clipping, or None for no gradient clipping'),
         'min-epochs': (100, 'do not early stop before min-epochs'),
-        'load-f': (False, '')
+        'load-f': (True, '')
     },
     'model_config': {
         'task': ('md', 'which tasks to train on, can be any of [lp, nc]'),
@@ -46,7 +46,8 @@ config_args = {
         'space_dim': (9, 'whether to local tangent space aggregation or not'),
         'time_dim': (1, 'whether to local tangent space aggregation or not'),
         'curv_coef': (0.5, 'regulariser to account for curvature loss'),
-        'curv_alpha': (0.1, 'alpha for curvature')  # TODO: to learn or fine-tune
+        'curv_alpha': (0.1, 'alpha for curvature'),  # TODO: to learn or fine-tune
+        'curv_aware': (True, 'whether use curvature-aware')
     },
     'data_config': {
         'dataset': ('web-edu', 'which dataset to use'),

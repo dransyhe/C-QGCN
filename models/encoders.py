@@ -132,8 +132,10 @@ class HGCN(Encoder):
         self.encode_graph = True
         self.skip_connect = True 
         self.task = args.task
-        # TODO: r_map - check in_feat.dim
-        self.r_map = nn.Linear(dims[0],  1)
+        # add r_map
+        if args.curv_aware:
+            self.r_map = nn.Linear(dims[0],  1)
+        self.curv_aware = args.curv_aware
 
     def encode(self, x, adj):
         # print(x.max().item(),)
@@ -144,7 +146,8 @@ class HGCN(Encoder):
             time_dim = int((self.manifold.time_dim/self.manifold.dim)*x.shape[1])
 
         # computation of r_coo
-        r_coo = self.r_map(x)
+        if self.curv_aware:
+            r_coo = self.r_map(x)
         x_tan = self.manifold.proj_tan0(x, self.c, time_dim=time_dim)
         # print(x_tan)
         assert not torch.isnan( x_tan ).any()
@@ -161,7 +164,8 @@ class HGCN(Encoder):
             output = self.manifold.expmap0( self.manifold.proj_tan0( (self.manifold.logmap0(hidden,self.c) + self.manifold.logmap0(output, self.c) )/2, self.c), self.c)
         else:
             output = super(HGCN, self).encode(x_hyp, adj)
-        output = torch.cat((output, r_coo), dim=-1)
+        if self.curv_aware:
+            output = torch.cat((output, r_coo), dim=-1)
         return output
 
 class GAT(Encoder):

@@ -101,10 +101,12 @@ class MDDecoder(Decoder):
         self.beta = c
         self.curv_alpha = args.curv_alpha
         self.curv_coef = args.curv_coef
+        self.curv_aware = args.curv_aware
 
     def decode(self, x, data):
         # unpack x, r
-        x, r = x[:, :-1], x[:, -1:]
+        if self.curv_aware:
+            x, r = x[:, :-1], x[:, -1:]
 
         num, dim = x.size(0),x.size(1)
         device = x.get_device()
@@ -117,16 +119,17 @@ class MDDecoder(Decoder):
 
         x_1 = x.repeat(num,1)
         x_2 = x.repeat_interleave(num,0)
+        dist = self.manifold.sqdist(x_1, x_2, self.beta).view(num, num)
 
         # prepare r_1, r_2
-        r_1 = r.repeat(num, 1)
-        r_2 = r.repeat_interleave(num, 0)
+        if self.curv_aware:
+            r_1 = r.repeat(num, 1)
+            r_2 = r.repeat_interleave(num, 0)
 
-        # add r_dist = (r_i - r_j)^2
-        r_dist = (r_1 - r_2).pow(2)
+            # add r_dist = (r_i - r_j)^2
+            r_dist = (r_1 - r_2).pow(2)
+            dist = dist + r_dist
 
-        dist = self.manifold.sqdist(x_1, x_2, self.beta).view(num,num)
-        dist = dist + r_dist
         inner = self.manifold.inner(x_1, x_2).view(num,num)
 
         simi = torch.clamp(torch.exp(-dist), min=1e-15)
@@ -144,11 +147,13 @@ class MDDecoder(Decoder):
         # add curv_loss
         # TODO: R_h is now omitted
         # curv_loss = sum((F(x_i) - R_h -  R(ri))^2 / (|F(x_i)| + eps))
-        r_score = compute_r_score(r, self.curv_alpha)
-        curv_loss = torch.sum(torch.pow((data['f_score'] - r_score), 2) /
-                              torch.pow((torch.abs(data['f_score']) + 1e-15), 2))
-
-        loss = dist_loss + self.curv_coef * curv_loss
+        if self.curv_aware:
+            r_score = compute_r_score(r, self.curv_alpha)
+            curv_loss = torch.sum(torch.pow((data['f_score'] - r_score), 2) /
+                                  torch.pow((torch.abs(data['f_score']) + 1e-15), 2))
+            loss = dist_loss + self.curv_coef * curv_loss
+        else:
+            loss = dist_loss
 
         return x, dist, loss, dist.max().item(), max_inner, min_inner
 
