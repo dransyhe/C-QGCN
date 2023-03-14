@@ -110,6 +110,7 @@ class MDDecoder(Decoder):
         self.curv_alpha = args.curv_alpha
         self.curv_coef = args.curv_coef
         self.curv_aware = args.curv_aware
+        self.r_h = args.time_dim * (args.time_dim - 1)
 
     def decode(self, x, data):
         # unpack x, r
@@ -153,11 +154,10 @@ class MDDecoder(Decoder):
         dist_loss = (-torch.log(dist_loss)).sum()
 
         # add curv_loss
-        # TODO: R_h is now omitted
         # curv_loss = sum((F(x_i) - R_h -  R(ri))^2 / (|F(x_i)| + eps))
         if self.curv_aware:
             r_score = compute_r_score(r, self.curv_alpha)
-            curv_loss = torch.sum(torch.pow((data['f_score'] - r_score), 2) /
+            curv_loss = torch.sum(torch.pow((data['f_score'] - self.r_h - r_score), 2) /
                                   torch.pow((torch.abs(data['f_score']) + 1e-15), 2))
             loss = dist_loss + self.curv_coef * curv_loss
         else:
