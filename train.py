@@ -122,6 +122,8 @@ def train(args):
         pickle.dump(data['f_score'], open(filename, 'wb'))
     else:
         data['f_score'] = pickle.load(open(filename, 'rb'))
+    if args.cuda > -1:
+        data['f_score'] = data['f_score'].to(args.cuda)
 
     # Train model
     t_total = time.time()

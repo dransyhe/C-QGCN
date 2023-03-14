@@ -156,7 +156,7 @@ class MDDecoder(Decoder):
         # add curv_loss
         # curv_loss = sum((F(x_i) - R_h -  R(ri))^2 / (|F(x_i)| + eps))
         if self.curv_aware:
-            r_score = compute_r_score(r, self.curv_alpha)
+            r_score = compute_r_score(r, self.curv_alpha).to(x.device)
             curv_loss = torch.sum(torch.pow((data['f_score'] - self.r_h - r_score), 2) /
                                   torch.pow((torch.abs(data['f_score']) + 1e-15), 2))
             loss = dist_loss + self.curv_coef * curv_loss
