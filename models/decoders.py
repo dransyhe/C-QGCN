@@ -136,7 +136,7 @@ class MDDecoder(Decoder):
             r_2 = r.repeat_interleave(num, 0)
 
             # add r_dist = (r_i - r_j)^2
-            r_dist = (r_1 - r_2).pow(2)
+            r_dist = (r_1 - r_2).pow(2).view(num, num)
             dist = dist + r_dist
 
         inner = self.manifold.inner(x_1, x_2).view(num,num)

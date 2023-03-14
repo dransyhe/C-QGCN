@@ -17,7 +17,7 @@ from utils.data_utils import load_data, sparse_mx_to_torch_sparse_tensor
 from utils.train_utils import get_dir_name, format_metrics
 from utils.distortions import compute_f_score
 
-torch.autograd.set_detect_anomaly(True)
+# torch.autograd.set_detect_anomaly(True)
 
 # import os
 # os.environ['CUDA_VISIBLE_DEVICES'] = '1'

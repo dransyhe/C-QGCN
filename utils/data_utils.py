@@ -246,8 +246,8 @@ def load_synthetic_md_data(dataset_str, use_feats, data_path):
         features = features + sp.csr_matrix(rand_feature)
         # print(features)
         # features = 
-    # G = nx.from_numpy_matrix(adj)
-    G = nx.Graph(np.array(adj))
+    G = nx.from_numpy_matrix(adj)
+    # G = nx.Graph(np.array(adj))
     labels = build_distance(G)
     labels = labels
     # G = nx.Graph(G)

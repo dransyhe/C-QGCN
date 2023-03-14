@@ -119,7 +119,9 @@ class MDModel(BaseModel):
         G = data['G']
         n = G.order()
         G = nx.to_scipy_sparse_matrix(G, nodelist=list(range(G.order())))
-        true_dist = (torch.Tensor(data['labels'])).to(device)
+        true_dist = torch.Tensor(data['labels'])
+        if device > -1:
+            true_dist = true_dist.to(device)
         # true_dist = (true_dist/true_dist.max())*math.pi
 
         mask = np.array(np.triu(np.ones((true_dist.shape[0],true_dist.shape[0]))) - np.eye(true_dist.shape[0], true_dist.shape[0]), dtype=bool)
