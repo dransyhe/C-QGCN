@@ -65,8 +65,9 @@ optional arguments:
   --manifold MANIFOLD   which manifold to use, can be any of [Euclidean,
                         Hyperboloid, PoincareBall]
   --c C                 hyperbolic radius, set to None for trainable curvature
-  --curva-aware         Whether to use curvature-aware method  
-  --curv-coef           Coefficient to regularise the scalar curvature loss
+  --curva_aware         Whether to use curvature-aware method  
+  --curv_coef           Coefficient to regularise the scalar curvature loss
+  --distortion_loss_coef Coefficient to regularise distortion loss in node classification tasks
   --load-f              Whether to load pre-computed f-score (node-wise Forman curvature)
   --r R                 fermi-dirac decoder parameter for lp
   --t T                 fermi-dirac decoder parameter for lp
