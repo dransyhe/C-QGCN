@@ -28,9 +28,9 @@ config_args = {
        'load-f': (True, '')
    },
    'model_config': {
-       'task': ('md', 'which tasks to train on, can be any of [lp, nc]'),
+       'task': ('nc', 'which tasks to train on, can be any of [lp, nc]'),
        'model': ('HGCN', 'which encoder to use, can be any of [Shallow, MLP, HNN, GCN, GAT, HGCN]'),
-       'dim': (10, 'embedding dimension'),
+       'dim': (16, 'embedding dimension'),
        'manifold': ('PseudoHyperboloid', 'which manifold to use, can be any of [Euclidean, Hyperboloid, PoincareBall, PseudoHyperboloid]'),
        'c': (None, 'hyperbolic radius, set to None for trainable curvature'),
        'r': (2., 'fermi-dirac decoder parameter for lp'),
@@ -45,14 +45,15 @@ config_args = {
        'double-precision': ('0', 'whether to use double precision'),
        'use-att': (0, 'whether to use hyperbolic attention or not'),
        'local-agg': (0, 'whether to local tangent space aggregation or not'),
-       'space_dim': (5, 'whether to local tangent space aggregation or not'),
-       'time_dim': (5, 'whether to local tangent space aggregation or not'),
-       'curv_coef': (0.1, 'regulariser to account for curvature loss'),
+       'space_dim': (2, 'whether to local tangent space aggregation or not'),
+       'time_dim': (14, 'whether to local tangent space aggregation or not'),
+       'curv_coef': (1.0, 'regulariser to account for curvature loss'),
        # 'curv_alpha': (0.1, 'alpha for curvature'),  # TODO: to learn or fine-tune
-       'curv_aware': (True, 'whether use curvature-aware')
+       'curv_aware': (False, 'whether use curvature-aware'),
+       'distortion_loss_coef': (0.001, 'regulariser for distortion loss')
    },
    'data_config': {
-       'dataset': ('web-edu', 'which dataset to use'),
+       'dataset': ('cora', 'which dataset to use'),
        'val-prop': (0.05, 'proportion of validation edges for link prediction'),
        'test-prop': (0.1, 'proportion of test edges for link prediction'),
        'use-feats': (1, 'whether to use node features or not'),
