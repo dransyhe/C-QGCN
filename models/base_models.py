@@ -156,7 +156,7 @@ class NCModel(BaseModel):
     def __init__(self, args):
         super(NCModel, self).__init__(args)
         self.decoder = model2decoder[args.model](self.manifold, self.c, args)
-        if args.curv_aware:
+        if args.distortion_loss_coef > 0:
           self.md_decoder = MDDecoder(self.c, self.manifold, args)
         if args.n_classes > 2:
             self.f1_average = 'micro'
@@ -174,7 +174,7 @@ class NCModel(BaseModel):
     def decode(self, h, adj, idx):
         output = self.decoder.decode(h, adj)
         pred = F.log_softmax(output[idx], dim=1)
-        if self.curv_aware:
+        if self.distortion_loss_coef > 0:
           _, _, distortion_loss, _, _, _ = self.md_decoder.decode(h, adj)
           return pred, distortion_loss
         else:
