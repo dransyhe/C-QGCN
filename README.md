@@ -1,6 +1,6 @@
 # Curvature-Aware Pseudo-Riemannian Graph Convolutional Networks
 
-This is the repository for my final project submitted to [R255: Physics and Geometry in Machine Learning](https://www.cl.cam.ac.uk/teaching/2223/R255/). The code and description below are adapted from the [official implementation](https://github.com/xiongbo010/qgcn) of [Pseudo-Riemannian Graph Convolutional Networks](https://arxiv.org/abs/2106.03134). 
+This is the repository for my final project submitted to [R255: Physics and Geometry in Machine Learning](https://www.cl.cam.ac.uk/teaching/2223/R255/). The code and description below were adapted from the [official implementation](https://github.com/xiongbo010/qgcn) of [Pseudo-Riemannian Graph Convolutional Networks](https://arxiv.org/abs/2106.03134). 
 
 ## Requirements
 
